@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convite Roda da Saúde — Impressão</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- QR Code library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --verde: #2d5a3d;
+    --verde2: #3d7a4a;
+    --verde-suave: #a8c5a0;
+    --creme: #f5f0e8;
+    --creme-escuro: #e8e0d0;
+    --dourado: #c9a96e;
+    --dourado-esc: #a07c40;
+    --texto: #1e2d24;
+    --cinza: #6a8a72;
+  }
+
+  body {
+    background: #d0ccc4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    gap: 32px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .instrucao {
+    background: white;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 11px;
+    color: #666;
+    letter-spacing: 1px;
+  }
+
+  /* ── CARD A5 paisagem (148mm × 105mm) ── */
+  .card {
+    width: 148mm;
+    height: 105mm;
+    background: var(--creme);
+    display: flex;
+    flex-direction: row;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Coluna esquerda — verde */
+  .col-esq {
+    width: 48mm;
+    background: var(--verde);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5mm;
+    padding: 8mm 6mm 14mm 6mm;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .col-esq::before {
+    content: '';
+    position: absolute;
+    width: 60mm; height: 60mm;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.07);
+    top: -20mm; right: -20mm;
+  }
+  .col-esq::after {
+    content: '';
+    position: absolute;
+    width: 35mm; height: 35mm;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.05);
+    bottom: -10mm; left: -10mm;
+  }
+
+  .logo-wrap {
+    width: 75%;
+    position: relative; z-index: 1;
+  }
+  .logo-wrap img {
+    width: 100%; height: auto;
+    display: block;
+    filter: brightness(0) invert(1);
+  }
+
+
+  /* Apoiador rodapé */
+  .apoiador {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.15);
+    padding: 2.5mm 6mm;
+    display: flex;
+    align-items: center;
+    gap: 4mm;
+    z-index: 2;
+  }
+  .apoiador-label {
+    font-size: 5pt;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    white-space: nowrap;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .apoiador svg {
+    height: 7mm;
+    width: auto;
+    filter: brightness(0) invert(1);
+    opacity: 0.6;
+  }
+
+  .col-centro {
+    position: relative; z-index: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5mm;
+  }
+  .titulo-roda {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20pt;
+    font-weight: 300;
+    color: white;
+    line-height: 1.1;
+  }
+  .titulo-roda em { font-style: italic; color: var(--verde-suave); }
+  .linha-dourada {
+    width: 10mm; height: 0.5mm;
+    background: var(--dourado);
+    opacity: 0.7;
+  }
+  .info-horario {
+    font-size: 7.5pt;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.75);
+    text-transform: uppercase;
+  }
+  .info-formato {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 9pt;
+    color: var(--dourado);
+  }
+  .info-local {
+    font-size: 6pt;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.6;
+    letter-spacing: 0.3px;
+  }
+
+  .col-esq-titulo {
+    position: relative; z-index: 1;
+    text-align: center;
+  }
+  .col-esq-titulo p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18pt;
+    font-weight: 300;
+    color: white;
+    line-height: 1.1;
+  }
+  .col-esq-titulo em {
+    font-style: italic;
+    color: var(--verde-suave);
+  }
+
+  .col-esq-sub {
+    position: relative; z-index: 1;
+    text-align: center;
+  }
+  .col-esq-sub p {
+    font-size: 6.5pt;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.6;
+  }
+  .col-esq-sub span {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 9pt;
+    color: var(--dourado);
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* Coluna direita — creme */
+  .col-dir {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 7mm 7mm 6mm 7mm;
+    gap: 4mm;
+  }
+
+  /* Calendário */
+  .cal-titulo {
+    font-size: 6pt;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--cinza);
+    margin-bottom: 1mm;
+  }
+
+  .cal-lista { display: flex; flex-direction: column; gap: 1.5mm; }
+
+  .cal-item {
+    display: grid;
+    grid-template-columns: 6mm 22mm 1fr;
+    align-items: center;
+    gap: 2mm;
+    padding: 2mm 2.5mm;
+    background: white;
+    border-radius: 1.5mm;
+    border-left: 2px solid var(--creme-escuro);
+  }
+
+  .cal-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13pt;
+    font-weight: 600;
+    color: var(--verde);
+    line-height: 1;
+    text-align: center;
+  }
+
+  .cal-data {
+    font-size: 7pt;
+    color: var(--dourado-esc);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  .cal-tema {
+    font-size: 7pt;
+    color: var(--texto);
+    line-height: 1.3;
+  }
+  .cal-tema strong {
+    display: block;
+    font-weight: 500;
+    font-size: 7.5pt;
+  }
+
+  /* QR + CTA */
+  .qr-row {
+    display: flex;
+    align-items: center;
+    gap: 4mm;
+    margin-top: auto;
+    padding-top: 3mm;
+    border-top: 1px solid var(--creme-escuro);
+  }
+
+  #qrcode {
+    flex-shrink: 0;
+    width: 18mm;
+    height: 18mm;
+  }
+  #qrcode img, #qrcode canvas {
+    width: 18mm !important;
+    height: 18mm !important;
+  }
+
+  .qr-texto { flex: 1; }
+  .qr-texto strong {
+    display: block;
+    font-size: 8pt;
+    font-weight: 500;
+    color: var(--verde);
+    margin-bottom: 1.5mm;
+  }
+  .qr-texto p {
+    font-size: 6.5pt;
+    color: var(--cinza);
+    line-height: 1.5;
+  }
+
+  .qr-btn {
+    background: var(--verde);
+    color: white;
+    font-size: 6pt;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 2.5mm 4mm;
+    border-radius: 1mm;
+    text-decoration: none;
+    white-space: nowrap;
+    display: inline-block;
+    margin-top: 2mm;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body {
+      background: white;
+      padding: 0;
+      display: block;
+    }
+    .instrucao { display: none; }
+    .card {
+      box-shadow: none;
+      margin: 0 auto;
+      page-break-after: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+
+
+
+<div class="card">
+
+  <!-- Coluna esquerda -->
+  <div class="col-esq">
+
+
+    <div class="col-centro">
+      <p class="titulo-roda">Roda da<br><em>Saúde</em></p>
+      <div class="linha-dourada"></div>
+      <p class="info-horario">Quartas-feiras · 8h às 9h</p>
+      <p class="info-formato">Presencial + Online</p>
+      <p class="info-local">Consultório 1 · UAPS Monteiro de Moraes<br>Av. Evilásio Alm Miranda s/n</p>
+    </div>
+  <div class="apoiador">
+    <span class="apoiador-label">Apoio</span>
+    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="140 130 910 430" style="width:100%;height:auto;display:block;filter:brightness(0) invert(1);" enable-background="new 0 0 1204.371 690.741"
+	 xml:space="preserve">
+<g>
+	<g>
+		<g>
+			<rect x="348.613" y="336.04" fill="#0B713A" width="9.657" height="90.389"/>
+			<g>
+				<path fill="#0B713A" d="M303.66,375.296C303.659,375.296,303.66,375.296,303.66,375.296c-39.658,0-63.522-39.145-64.52-40.811
+					l-2.594-4.338l4.775-1.654c15.691-5.436,30.413-8.189,43.757-8.189c24.464,0,40.244,9.293,49.175,17.088
+					c9.772,8.533,13.687,17.131,13.849,17.494l1.373,3.068l-2.739,1.953C332.418,370.116,317.924,375.296,303.66,375.296z
+					 M249.144,334.569c7.152,9.717,26.879,32.508,54.517,32.51c11.541,0,23.394-3.965,35.28-11.787
+					c-1.799-2.869-5.136-7.445-10.393-11.971c-11.41-9.82-26.036-14.801-43.469-14.801
+					C274.099,328.521,262.032,330.554,249.144,334.569z"/>
+			</g>
+			<g>
+				<path fill="#0B713A" d="M351.18,357.503c0,0-10.24-16.072-48.512-9.863C302.668,347.64,321.084,369.081,351.18,357.503z"/>
+			</g>
+			<g>
+				<path fill="#0B713A" d="M349.773,349.173l-1.394-3.303c-9.405-22.285-10.021-42.727-1.832-60.754
+					c14.604-32.151,51.742-44.725,53.316-45.243l5.114-1.688l0.607,5.351c5.376,47.249-8.91,73.21-21.839,86.671
+					c-14.243,14.824-29.808,18.121-30.462,18.252L349.773,349.173z M397.444,250.256c-10.244,4.498-33,16.579-42.945,38.532
+					c-6.676,14.738-6.507,31.559,0.495,50.043c4.89-1.732,14.178-5.955,22.781-15.057
+					C393.278,307.374,400.035,282.037,397.444,250.256z"/>
+			</g>
+			<g>
+				<path fill="#0B713A" d="M353.196,338.974c0,0,18.248-5.492,22.658-44.014C375.854,294.96,350.221,306.866,353.196,338.974z"/>
+			</g>
+		</g>
+		<g>
+			<g>
+				<g>
+					<g>
+						<path fill="#895D35" d="M360.122,555.651c-115.948,0-210.277-94.336-210.277-210.283c0-3.906,0.108-7.791,0.317-11.65
+							c0.155-2.883,2.606-5.076,5.5-4.93c2.881,0.152,5.089,2.615,4.934,5.498c-0.2,3.668-0.299,7.363-0.299,11.082
+							c0,110.189,89.641,199.832,199.826,199.832c110.184,0,199.827-89.643,199.827-199.832c0-110.186-89.643-199.83-199.827-199.83
+							c-92.076,0-171.835,62.33-193.963,151.574c-0.696,2.801-3.53,4.504-6.33,3.814c-2.801-0.693-4.507-3.527-3.814-6.328
+							c23.288-93.917,107.218-159.509,204.107-159.509c115.945,0,210.277,94.333,210.277,210.278
+							C570.399,461.315,476.067,555.651,360.122,555.651z"/>
+					</g>
+					<g>
+						<path fill="#895D35" d="M438.924,539.962c-0.18,0-0.362-0.006-0.543-0.027c-2.87-0.297-4.957-2.863-4.662-5.73
+							c3.937-38.178-3.396-66.223-21.794-83.357c-27.707-25.801-71.725-18.434-72.164-18.357c-0.299,0.053-0.598,0.08-0.903,0.08
+							c-24.151,0-44.024-11.453-59.995-20.656c-4.671-2.691-9.084-5.236-12.971-7.094c-6.146-2.936-10.845-3.662-12.579-1.93
+							c-2.399,2.408-1.718,9.934-0.359,12.758c12.713,26.402,35.981,30.592,52.971,33.652c9.859,1.773,17.648,3.178,21.139,8.813
+							c3.025,4.891,1.656,8.563,0.568,10.322c-4.342,7.002-18.761,6.764-26.967,6.012c-71.502-9.229-94.068-59.834-112.198-100.496
+							c-6.28-14.08-12.211-27.381-19.368-36.785c-4.013-5.27-6.325-6.662-7.163-7.023c-0.595,0.883-1.217,2.99-1.362,4.391
+							c-0.294,2.873-2.817,4.965-5.73,4.668c-2.868-0.295-4.957-2.859-4.666-5.729c0.196-1.9,1.534-11.482,8.874-13.549
+							c7.399-2.092,14.034,5.227,18.364,10.918c7.891,10.365,14.061,24.201,20.592,38.854
+							c17.958,40.27,38.309,85.912,103.808,94.367c6.146,0.557,13.071,0.162,16.008-0.832c-1.84-1.502-8.665-2.73-13.751-3.648
+							c-18.122-3.264-45.507-8.193-60.534-39.4c-2.446-5.072-4.336-17.936,2.376-24.668c5.295-5.313,13.531-5.355,24.485-0.121
+							c4.248,2.033,8.83,4.672,13.68,7.467c14.79,8.527,33.179,19.121,54.354,19.26c5.457-0.863,50.453-7.008,80.611,21.084
+							c20.919,19.482,29.353,50.465,25.065,92.072C443.837,537.964,441.566,539.962,438.924,539.962z"/>
+					</g>
+					<g>
+						<path fill="#895D35" d="M152.552,332.802c0,0-0.49,0.588,0,2.551c0.493,1.965,3.535-1.277,3.535-1.277l-1.017-2.258
+							L152.552,332.802z"/>
+					</g>
+				</g>
+			</g>
+		</g>
+	</g>
+	<g>
+		<g>
+			<path fill="#0B713A" d="M695.324,387.903c-5.215-2.508-10.568-3.766-16.063-3.766c-4.188,0-7.913,0.744-11.173,2.232
+				c-4.098,1.959-6.097,4.658-6.004,8.102c0.093,4.471,3.396,7.729,9.916,9.779c6.144,1.859,12.241,3.723,18.296,5.586
+				c6.609,3.162,10.009,8.377,10.195,15.641c0.186,6.141-2.982,11.869-9.498,17.176c-3.818,3.168-9.266,5.59-16.339,7.266
+				c-6.053,1.393-12.152,2.094-18.299,2.094c-4.002,0-8.285-0.652-12.848-1.957l-0.139-0.277c0.277-1.77,0.979-5.121,2.094-10.057
+				c9.498,1.77,14.99,2.654,16.481,2.654c5.399,0,10.285-0.979,14.664-2.932c5.586-2.605,8.332-6.238,8.24-10.898
+				c-0.188-4.281-3.447-7.539-9.775-9.773c-5.961-1.957-11.873-3.91-17.738-5.867c-6.424-3.164-9.729-8.1-9.913-14.801
+				c-0.19-7.914,3.629-13.83,11.449-17.74c6.146-2.979,13.733-4.471,22.766-4.471c5.399,0,10.241,0.703,14.526,2.096l0.137,0.283
+				C696.115,380.411,695.789,383.626,695.324,387.903z"/>
+			<path fill="#0B713A" d="M778.562,418.071c0,17.135,0.044,26.771,0.139,28.912l-0.419,0.98c-2.144-0.098-4.656-0.885-7.542-2.379
+				c-2.233-1.113-4.469-2.277-6.704-3.49c-7.449,4.469-14.199,6.703-20.251,6.703c-9.031,0-16.34-2.977-21.928-8.936
+				c-5.4-5.68-8.238-13.078-8.518-22.209c-0.469-13.127,3.583-23.32,12.149-30.584c7.915-6.609,18.526-9.914,31.843-9.914
+				c7.543,0,12.802,0.697,15.783,2.094c3.723,1.766,5.68,5.166,5.865,10.193c0,0.652-0.049,4.752-0.141,12.291
+				C778.653,410.024,778.562,415.47,778.562,418.071z M757.332,385.53c-9.684-0.461-17.156,2.166-22.415,7.895
+				c-5.263,5.727-7.706,13.568-7.333,23.531c0.186,6.518,1.861,11.779,5.027,15.783c3.444,4.471,8.287,6.705,14.526,6.705
+				c5.957,0,11.731-2.281,17.317-6.846c0.371-23.182,0.56-36.775,0.56-40.779c-0.095-1.303-0.746-2.609-1.955-3.916
+				C761.474,386.417,759.566,385.63,757.332,385.53z"/>
+			<path fill="#0B713A" d="M819.759,358.298c-0.466,3.074-0.79,9.635-0.977,19.691c3.816,0,9.588-0.092,17.318-0.277
+				c-0.278,2.418-0.467,5.205-0.559,8.361c-3.539,0-9.031,0.047-16.48,0.141l-0.417,43.77c0,4.273,1.581,7.385,4.747,9.336
+				c2.699,1.77,7.029,2.883,12.99,3.348l-0.281,4.6c-2.98,0.648-5.959,0.977-8.938,0.977c-14.435,0-21.789-5.205-22.068-15.609
+				l-0.139-46.264h-11.592l0.14-0.557l1.396-6.564l10.195-1.82l0.42-16.197L819.759,358.298z"/>
+			<path fill="#0B713A" d="M869.621,376.597c-1.678,24.859-2.049,48.229-1.119,70.107c-5.397,0.186-10.334,0.42-14.805,0.699
+				c1.211-18.158,1.678-35.102,1.398-50.838c-0.093-6.701-0.418-12.428-0.979-17.176c5.958-1.025,11.081-2.004,15.363-2.936
+				L869.621,376.597z M868.361,362.069l-0.976,0.842c-2.142,0.373-5.401,0.834-9.776,1.393c0.93-3.816,2-9.637,3.212-17.457
+				c3.259-0.094,8.102-0.324,14.524-0.697L868.361,362.069z"/>
+			<path fill="#0B713A" d="M948.806,377.429c-8.472,20.77-16.992,43.627-25.557,68.576l-0.42,0.422
+				c-1.397,0.092-7.54,0.604-18.435,1.537l-0.421-0.42c-8.658-29.607-16.059-52.795-22.206-69.555
+				c5.12-0.369,10.337-0.834,15.644-1.393l0.558,0.277c1.956,7.82,4.795,17.924,8.521,30.303c5.211,17.881,8.146,27.936,8.8,30.17
+				c4.745-13.125,11.358-32.912,19.829-59.357l0.421-0.277C939.634,377.712,944.058,377.62,948.806,377.429z"/>
+			<path fill="#0B713A" d="M951.599,415.841c-0.467-12.195,2.561-21.789,9.077-28.771c6.518-6.982,16.062-10.473,28.63-10.473
+				c10.616,0,18.902,2.932,24.862,8.799c5.68,5.773,8.704,13.779,9.077,24.021c0.466,12.287-2.328,21.836-8.383,28.629
+				c-6.422,7.262-15.873,10.891-28.347,10.891c-10.896,0-19.343-2.879-25.35-8.654C955.16,434.509,951.97,426.362,951.599,415.841z
+				 M988.049,384.138c-15.456,0-22.812,10.941-22.065,32.818c0.278,6.893,1.956,12.525,5.027,16.902
+				c3.724,5.119,8.938,7.68,15.644,7.68c15.548,0,22.95-10.055,22.206-30.168C1008.208,393.212,1001.271,384.138,988.049,384.138z"
+				/>
+		</g>
+		<g>
+			<path fill="#0B713A" d="M674.604,275.335c-10.616,2.607-26.631,6.475-48.046,11.594c1.209,17.129,9.685,25.697,25.418,25.697
+				c8.287,0,16.34-2.932,24.163-8.799c-0.468,3.262-0.793,6.982-0.979,11.172c-1.955,1.867-5.959,3.402-12.011,4.611
+				c-4.935,1.021-9.358,1.537-13.268,1.537c-11.081,0-19.927-2.746-26.538-8.244c-7.075-5.678-10.802-13.824-11.173-24.436
+				c-0.371-11.547,2.468-21.093,8.521-28.635c6.609-8.098,15.783-12.148,27.513-12.148c7.542,0,14.082,1.885,19.623,5.652
+				c5.539,3.772,9.518,9.105,11.941,15.994C678.838,270.821,677.117,272.823,674.604,275.335z M647.506,255.087
+				c-10.428,0-17.69,7.587-21.786,22.763l39.524-8.798C659.659,259.745,653.745,255.087,647.506,255.087z"/>
+			<path fill="#0B713A" d="M738.847,260.253c-5.215-2.514-10.568-3.773-16.061-3.773c-4.191,0-7.916,0.751-11.174,2.237
+				c-4.098,1.956-6.1,4.655-6.007,8.101c0.093,4.468,3.4,7.727,9.917,9.776c6.145,1.866,12.24,3.726,18.295,5.587
+				c6.611,3.166,10.01,8.377,10.196,15.641c0.186,6.146-2.979,11.873-9.497,17.178c-3.818,3.166-9.266,5.588-16.34,7.264
+				c-6.054,1.398-12.15,2.096-18.297,2.096c-4.004,0-8.288-0.654-12.847-1.953l-0.14-0.281c0.277-1.77,0.977-5.121,2.095-10.057
+				c9.495,1.77,14.987,2.654,16.478,2.654c5.4,0,10.289-0.98,14.666-2.932c5.587-2.607,8.331-6.24,8.238-10.893
+				c-0.186-4.285-3.443-7.547-9.775-9.779c-5.959-1.955-11.871-3.91-17.738-5.865c-6.424-3.166-9.728-8.099-9.914-14.803
+				c-0.188-7.916,3.631-13.827,11.451-17.737c6.146-2.979,13.732-4.471,22.766-4.471c5.398,0,10.242,0.698,14.525,2.091l0.139,0.283
+				C739.637,252.76,739.312,255.972,738.847,260.253z"/>
+			<path fill="#0B713A" d="M759.097,250.333l0.417-0.274c5.959,0.558,10.707,2.003,14.247,4.331
+				c7.727-4.471,15.828-6.705,24.301-6.705c8.66,0,15.783,3.025,21.367,9.078c5.309,5.864,8.055,12.986,8.24,21.37
+				c0.186,13.685-5.494,24.065-17.035,31.144c-9.871,6.141-22.256,8.982-37.152,8.521c-0.094,10.422,0,19.736,0.279,27.928
+				l-0.42,0.281l-14.665,1.813c1.489-26.256,2.002-50.881,1.538-73.88C760.025,265.278,759.654,257.415,759.097,250.333z
+				 M793.175,256.343c-5.682,0-11.967,2.144-18.855,6.424c-0.559,12.012-0.838,27.889-0.838,47.625
+				c2.325,0.094,4.096,0.141,5.307,0.141c10.426,0,18.76-2.768,24.999-8.313c6.237-5.537,9.265-13.242,9.079-23.114
+				c-0.094-6.237-1.725-11.45-4.889-15.641C804.347,258.717,799.411,256.343,793.175,256.343z"/>
+			<path fill="#0B713A" d="M901.97,290.419c0,17.131,0.043,26.771,0.14,28.914l-0.421,0.975c-2.141-0.092-4.655-0.881-7.539-2.373
+				c-2.235-1.119-4.471-2.281-6.707-3.492c-7.451,4.467-14.197,6.705-20.249,6.705c-9.032,0-16.343-2.982-21.926-8.941
+				c-5.401-5.68-8.24-13.078-8.521-22.205c-0.467-13.127,3.582-23.324,12.15-30.584c7.914-6.61,18.527-9.919,31.844-9.919
+				c7.541,0,12.801,0.698,15.779,2.094c3.725,1.772,5.68,5.171,5.869,10.197c0,0.653-0.051,4.748-0.142,12.288
+				C902.062,282.368,901.97,287.813,901.97,290.419z M880.742,257.882c-9.686-0.467-17.156,2.162-22.416,7.889
+				c-5.264,5.724-7.706,13.571-7.332,23.535c0.186,6.518,1.861,11.777,5.026,15.779c3.444,4.469,8.289,6.705,14.524,6.705
+				c5.957,0,11.732-2.281,17.318-6.844c0.373-23.187,0.561-36.777,0.561-40.783c-0.095-1.303-0.748-2.602-1.957-3.91
+				C884.884,258.767,882.974,257.972,880.742,257.882z"/>
+			<path fill="#0B713A" d="M956.019,320.866c-1.307,4.004-3.027,9.541-5.17,16.619l-0.418,0.561c-4.099,0-8.754,0.141-13.966,0.42
+				c2.698-4.471,5.771-10.434,9.218-17.879c-8.566-1.207-15.41-4.75-20.53-10.613c-5.122-5.865-7.87-13.268-8.241-22.207
+				c-0.373-10.986,3.396-20.227,11.313-27.723c7.912-7.493,17.597-11.246,29.048-11.246c6.892,0,12.756,0.84,17.6,2.517
+				c-0.374,3.542-0.652,6.657-0.84,9.358l-0.557,0.138c-4.191-2.418-8.893-3.63-14.109-3.63c-8.377,0-15.201,2.981-20.457,8.936
+				c-5.265,5.963-7.752,13.039-7.473,21.232c0.28,7.355,2.326,13.266,6.146,17.736c4.188,4.936,10.006,7.4,17.454,7.4
+				c6.61,0,13.132-2.42,19.555-7.26c-0.372,4.375-0.653,7.865-0.839,10.475C970.122,318.495,964.209,320.216,956.019,320.866z"/>
+			<path fill="#0B713A" d="M982.832,288.185c-0.466-12.195,2.559-21.785,9.077-28.768c6.514-6.984,16.061-10.477,28.63-10.477
+				c10.613,0,18.899,2.932,24.859,8.799c5.68,5.775,8.707,13.779,9.078,24.021c0.465,12.294-2.326,21.837-8.38,28.632
+				c-6.423,7.262-15.874,10.895-28.349,10.895c-10.898,0-19.345-2.885-25.35-8.66C986.39,306.853,983.203,298.708,982.832,288.185z
+				 M1019.282,256.479c-15.458,0-22.814,10.945-22.065,32.826c0.277,6.885,1.955,12.521,5.027,16.896
+				c3.725,5.121,8.937,7.682,15.644,7.682c15.546,0,22.948-10.057,22.206-30.17C1039.438,265.559,1032.503,256.479,1019.282,256.479
+				z"/>
+		</g>
+	</g>
+</g>
+</svg>
+  </div>
+  </div>
+
+  <!-- Coluna direita -->
+  <div class="col-dir">
+
+    <div class="cal-titulo">Calendário 2026</div>
+
+    <div class="cal-lista">
+
+      <div class="cal-item">
+        <div class="cal-num">1</div>
+        <div class="cal-data">15 ABR 2026</div>
+        <div class="cal-tema"><strong>Obesidade como Sintoma, Não como Fim</strong></div>
+      </div>
+
+      <div class="cal-item">
+        <div class="cal-num">2</div>
+        <div class="cal-data">29 ABR 2026</div>
+        <div class="cal-tema"><strong>O Cérebro e a Comida: Desvendando o Desejo</strong></div>
+      </div>
+
+      <div class="cal-item">
+        <div class="cal-num">3</div>
+        <div class="cal-data">13 MAI 2026</div>
+        <div class="cal-tema"><strong>A Tríade da Saúde: Sono, Estresse e Peso</strong></div>
+      </div>
+
+      <div class="cal-item">
+        <div class="cal-num">4</div>
+        <div class="cal-data">27 MAI 2026</div>
+        <div class="cal-tema"><strong>Movimento Intuitivo: Do Exercício ao Prazer</strong></div>
+      </div>
+
+      <div class="cal-item">
+        <div class="cal-num">5</div>
+        <div class="cal-data">10 JUN 2026</div>
+        <div class="cal-tema"><strong>Saúde Inflamatória: Alimentação e Estilo de Vida</strong></div>
+      </div>
+
+    </div>
+
+    <!-- QR Code -->
+    <div class="qr-row">
+      <div id="qrcode"></div>
+      <div class="qr-texto">
+        <strong>Confirme sua presença</strong>
+        <p>Aponte a câmera do celular para o QR code e entre no grupo da Roda da Saúde no WhatsApp.</p>
+        <a class="qr-btn" href="https://chat.whatsapp.com/L3vADX37Kpu6K4dOVk8gxM">📲 entrar no grupo</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  new QRCode(document.getElementById("qrcode"), {
+    text: "https://chat.whatsapp.com/L3vADX37Kpu6K4dOVk8gxM?mode=gi_t",
+    width: 68,
+    height: 68,
+    colorDark: "#2d5a3d",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.M
+  });
+</script>
+
+</body>
+</html>
