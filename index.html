@@ -389,5 +389,69 @@ document.getElementById("slides-lista").innerHTML = ENCONTROS.map(e => {
     </div>`;
 }).join("");
 </script>
+
+<!-- ── MODAL CONVITE ── -->
+<style>
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(20,35,25,0.82);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.25s ease;
+  }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+  body.modal-open > *:not(.modal-overlay) {
+    filter: blur(3px);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .modal-frame {
+    position: relative;
+    width: 148mm; max-width: 95vw;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    border-radius: 3px; overflow: hidden;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+
+  .modal-frame iframe {
+    width: 100%; height: 105mm;
+    border: none; display: block;
+  }
+  .modal-fechar {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,0,0,0.45); color: white;
+    border: none; border-radius: 50%;
+    width: 30px; height: 30px; font-size: 15px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    z-index: 10; transition: background 0.2s;
+  }
+  .modal-fechar:hover { background: rgba(0,0,0,0.7); }
+</style>
+
+<div class="modal-overlay" id="modal" onclick="fecharModal(event)">
+  <div class="modal-frame">
+    <button class="modal-fechar">✕</button>
+    <iframe src="convite-mesa-consultorio.html" scrolling="no"></iframe>
+  </div>
+</div>
+
+<script>
+  document.body.classList.add('modal-open');
+
+  function fecharModal(e) {
+    if (e.target.id === 'modal') removerModal();
+  }
+  function removerModal() {
+    document.getElementById('modal')?.remove();
+    document.body.classList.remove('modal-open');
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') removerModal();
+  });
+  document.querySelector('.modal-fechar').addEventListener('click', removerModal);
+</script>
 </body>
 </html>
